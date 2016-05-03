@@ -1,0 +1,2 @@
+module HomeeHelper
+end

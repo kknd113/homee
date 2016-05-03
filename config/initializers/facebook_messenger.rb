@@ -1,0 +1,4 @@
+Facebook::Messenger.configure do |config|
+  config.access_token = 'EAADk6wZBzNLkBAFZC3oBfiu6uYzoGbqD7GXG3ciY6XO7WGv9mc3zR3uhcj4LkL0PpKgcSFuv19aHNcBcXDZAI1BpV313MBr4BJyxa1DuOZCosIUnYQZBrAGAKV6oUeTdMdEqwsZAQEoxP2382ZAEQcwI3BEZBUZBSU7Tn4boF680wMwZDZD'
+  config.verify_token = 'verifyme'
+end
