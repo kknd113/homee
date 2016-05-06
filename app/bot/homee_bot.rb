@@ -7,6 +7,7 @@ STYLE_TYPES = %w(modern traditional industrial ecelectic contemporary)
 Bot.on :message do |message|
   answer = message.text
   recipient = message.sender
+  @user = User.find_or_create_by(fb_id: recipient['id'])
   
   initiate_conversation(recipient)
 end
@@ -21,9 +22,11 @@ def ask_room_type_question(recipient)
   deliver_questions(recipient: recipient, question: 'So, what room can we help you with?', choices: ROOM_TYPES)
   Bot.on :message do |message|
     if ROOM_TYPES.include? message.text
+      @user.update! room_type: message.text
       puts 'expected answer save to users table'
       ask_budget_type_question(recipient)
     else
+      deliver_warning(recipient)
       ask_room_type_question(recipient)
     end
   end
@@ -33,9 +36,10 @@ def ask_budget_type_question(recipient)
   deliver_questions(recipient: recipient, question: 'Sweet :) \n what is your budget or price range?', choices: BUDGET_TYPES)
   Bot.on :message do |message|
     if BUDGET_TYPES.include? message.text
-      puts 'expected answer save to users table'
+      @user.update! budget: message.text
       ask_shipping_type_question(recipient)
     else
+      deliver_warning(recipient)
       ask_budget_type_question(recipient)
     end
   end
@@ -45,9 +49,10 @@ def ask_shipping_type_question(recipient)
   deliver_questions(recipient: recipient, question: 'Ok, when do you need your furniture by?', choices: SHIPPING_TYPES)
   Bot.on :message do |message|
     if SHIPPING_TYPES.include? message.text
-      puts 'expected answer save to users table'
+      @user.update! shipping_type: message.text
       ask_style_type_question(recipient)
     else
+      deliver_warning(recipient)
       ask_shipping_type_question(recipient)
     end
   end
@@ -58,8 +63,10 @@ def ask_style_type_question(recipient)
   Bot.on :message do |message|
     if STYLE_TYPES.include? message.text
       puts 'expected answer save to users table'
+      @user.update! style_type: message.text
       ask_image_question(recipient)
     else
+      deliver_warning(recipient)
       ask_style_type_question(recipient)
     end
   end
@@ -69,9 +76,11 @@ def ask_image_question(recipient)
   Bot.deliver(recipient: recipient, message: { text: 'Can you send us some pictures of your space?' })
   Bot.on :message do |message|
     if message.image_attachment.present? 
+      @user.update! picture_url: message.text
       puts 'expected answer save to users table'
       ask_misc_question(recipient)
     else
+      deliver_warning(recipient)
       ask_image_question(recipient)
     end
   end
@@ -81,6 +90,7 @@ def ask_misc_question(recipient)
   Bot.deliver(recipient: recipient, message: { text: 'Any special request or additional information?' })
   Bot.on :message do |message|
     puts 'save misc here'
+    @user.update! special_request: message.text
   end_conversation(recipient)
   end
 end
@@ -98,7 +108,16 @@ def deliver_questions(recipient: nil, question: 'default question', choices: [])
   Bot.deliver(
     recipient: recipient,
     message: {
-      text: question + "\n\n" + choices.to_s
+      text: question + "\n\n" + "Please pick from:\n" + choices.to_s
+    }
+  )
+end
+
+def deliver_warning(recipient)
+  Bot.deliver(
+    recipient: recipient,
+    message: {
+      text: "I am still a little dumb :/ \n Although case-insensitive, I'm looking for exact match with the choices"
     }
   )
 end
@@ -111,7 +130,7 @@ module Facebook
                 
         def image_attachment
           attachments = @payload['message']['attachments']
-          if attachments.any? && attachments.first['type'] == 'image'
+          if attachments.present? && attachments.first['type'] == 'image'
             attachments.first['payload']['url']
           else 
             nil

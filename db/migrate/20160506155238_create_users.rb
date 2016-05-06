@@ -1,7 +1,7 @@
 class CreateUsers < ActiveRecord::Migration
   def change
     create_table :users do |t|
-      t.integer :fb_id
+      t.bigint :fb_id
       t.string :room_type
       t.integer :budget
       t.string :shipping_type
