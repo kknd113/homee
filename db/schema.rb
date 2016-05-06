@@ -11,10 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160506155238) do
+ActiveRecord::Schema.define(version: 20160506163809) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "conversations", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "text"
+    t.boolean  "archived"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "conversations", ["user_id"], name: "index_conversations_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.integer  "fb_id",           limit: 8
@@ -28,4 +38,5 @@ ActiveRecord::Schema.define(version: 20160506155238) do
     t.datetime "updated_at",                null: false
   end
 
+  add_foreign_key "conversations", "users"
 end
