@@ -2,4 +2,3 @@
 
 1. Start conversation with the bot on https://warm-dusk-73961.herokuapp.com/
 2. json endpoint to retrieve user's conversation log: https://warm-dusk-73961.herokuapp.com/users/:id
-<tt>rake doc:app</tt>.
