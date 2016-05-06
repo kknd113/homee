@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  fb_id: 1
+  room_type: MyString
+  budget: 1
+  shipping_type: MyString
+  style_type: MyString
+  picture_url: MyString
+  special_request: MyString
+
+two:
+  fb_id: 1
+  room_type: MyString
+  budget: 1
+  shipping_type: MyString
+  style_type: MyString
+  picture_url: MyString
+  special_request: MyString
